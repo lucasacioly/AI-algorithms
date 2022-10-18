@@ -1,4 +1,5 @@
 import trajectories as traj
+from random import choice
 
 Q = [
     [],
@@ -22,6 +23,22 @@ rewards = {
 alpha = 0.5
 gamma = 1.0
 
+def rand_next_state(state : int):
+    if (state == 1):
+        return choice([1,2,3])
+    elif (state == 2):
+        return choice([1,2,4])
+    elif (state == 3):
+        return choice([1,3,4,5])
+    elif (state == 4):
+        return choice([2,3,4,6])
+    elif (state == 5):
+        return choice([3,5,6])
+
+def rand_action():
+    return choice(['UP', 'DW', 'LF', 'RG'])
+    
+
 def get_num_action(action : str) -> int :
     if (action == 'UP'):
         action = 0
@@ -42,22 +59,42 @@ def update(state : int, action: str, next_state: int, rewards : dict, Q : list, 
     
     return q_value
 
-
-
-if __name__ == "__main__":
-    num_traj = int(input('trajectory number: '))
-
-    trajectory : list = traj.trajs[num_traj - 1]
-    
-    for i in range(0, len(trajectory)):
-
-        state = trajectory[i]['state']
-        next_state = trajectory[i]['next_state']
-        action = get_num_action(trajectory[i]['action'])
-        
-        Q[state][action] = update(state, action, next_state, rewards, Q, alpha, gamma)
-
+def print_q(Q : list):
     print("\n-------------------------------\n")
     for i in range(len(Q)):
         print(Q[i])
 
+
+if __name__ == "__main__":
+
+    rand = int(input('Random trajectory? '))
+
+    if (not rand):
+        num_traj = int(input('trajectory number: '))
+
+        trajectory : list = traj.trajs[num_traj - 1]
+        
+        for i in range(0, len(trajectory)):
+
+            state = trajectory[i]['state']
+            next_state = trajectory[i]['next_state']
+            action = get_num_action(trajectory[i]['action'])
+            
+            Q[state][action] = update(state, action, next_state, rewards, Q, alpha, gamma)
+
+        print_q(Q)
+
+    elif (rand):
+        
+        state = 1 # initial state
+        while state !=6 :
+
+            next_state = rand_next_state(state)
+            action = get_num_action(rand_action())
+            
+            Q[state][action] = update(state, action, next_state, rewards, Q, alpha, gamma)
+
+            state = next_state
+            
+
+        print_q(Q)

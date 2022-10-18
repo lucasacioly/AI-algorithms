@@ -1,5 +1,7 @@
 #trajectories
 
+from random import randint, choice
+
 trajs = [ 
     [
         {'state':1, 'action': 'UP', 'next_state':2},
@@ -58,3 +60,11 @@ trajs = [
         {'state':4, 'action': 'UP', 'next_state':6}
     ]
 ]
+
+def random_traj() :
+    return randint(1, 4)
+
+
+if __name__ == '__main__':
+    print(random_traj())
+    print(choice([1,2,3]))
