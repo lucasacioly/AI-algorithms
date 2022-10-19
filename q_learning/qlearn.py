@@ -3,12 +3,12 @@ from random import choice
 
 Q = [
     [],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [10, 10, 10, 10, 10, 10]
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [10, 10, 10, 10]
 ]
 
 rewards = {
@@ -22,6 +22,8 @@ rewards = {
 
 alpha = 0.5
 gamma = 1.0
+
+politica = [0, 0, 0, 0, 0, 0]
 
 def rand_next_state(state : int):
     if (state == 1):
@@ -61,9 +63,23 @@ def update(state : int, action: str, next_state: int, rewards : dict, Q : list, 
 
 def print_q(Q : list):
     print("\n-------------------------------\n")
-    for i in range(len(Q)):
+    for i in range(1, len(Q)):
         print(Q[i])
 
+def update_policy(Q  : list[list], policy : list):
+    actions = ["UP", "DW", "LF", "RG"]
+    for i in range(1, len(Q)):
+        print(i)
+        estado = Q[i]
+        policy[i-1] = actions[estado.index(max(estado))]
+    
+    print(policy)
+
+    print(f'''\nPolitica:  
+{policy[4]} 1
+{policy[2]} {policy[3]}
+{policy[0]} {policy[1]}
+        ''')
 
 if __name__ == "__main__":
 
@@ -83,6 +99,7 @@ if __name__ == "__main__":
             Q[state][action] = update(state, action, next_state, rewards, Q, alpha, gamma)
 
         print_q(Q)
+        update_policy(Q, politica)
 
     elif (rand):
         
@@ -98,3 +115,4 @@ if __name__ == "__main__":
             
 
         print_q(Q)
+        update_policy(Q, politica)
