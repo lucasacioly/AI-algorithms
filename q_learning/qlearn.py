@@ -1,5 +1,7 @@
+from time import sleep
 import trajectories as traj
 from random import choice
+from time import sleep
 
 Q = [
     [],
@@ -54,8 +56,7 @@ def get_num_action(action : str) -> int :
     return action
 
 def update(state : int, action: str, next_state: int, rewards : dict, Q : list, alpha : float, gamma : float):
-    
-    print(state)    
+   
     estimate_q = rewards[str(state)][str(next_state)] + gamma * max(Q[next_state])
     q_value = Q[state][action] + alpha*(estimate_q - Q[state][action])
     
@@ -69,49 +70,64 @@ def print_q(Q : list):
 def update_policy(Q  : list[list], policy : list):
     actions = ["UP", "DW", "LF", "RG"]
     for i in range(1, len(Q)):
-        print(i)
         estado = Q[i]
         policy[i-1] = actions[estado.index(max(estado))]
-    
-    print(policy)
 
     print(f'''\nPolitica:  
-{policy[4]} 1
-{policy[2]} {policy[3]}
-{policy[0]} {policy[1]}
-        ''')
+            {policy[4]} 1
+            {policy[2]} {policy[3]}
+            {policy[0]} {policy[1]}
+                                    ''')
 
 if __name__ == "__main__":
-
-    rand = int(input('Random trajectory? '))
+    rand = None
+    while (rand != 0 and rand != 1):
+        rand = int(input('Random trajectory? '))
 
     if (not rand):
-        num_traj = int(input('trajectory number: '))
+        run_all = int(input('Run all? '))
 
-        trajectory : list = traj.trajs[num_traj - 1]
-        
-        for i in range(0, len(trajectory)):
+        if (not run_all):
+            num_traj = int(input('trajectory number: '))
 
-            state = trajectory[i]['state']
-            next_state = trajectory[i]['next_state']
-            action = get_num_action(trajectory[i]['action'])
+            trajectory : list = traj.trajs[num_traj - 1]
             
-            Q[state][action] = update(state, action, next_state, rewards, Q, alpha, gamma)
+            for i in range(0, len(trajectory)):
 
-        print_q(Q)
-        update_policy(Q, politica)
+                state = trajectory[i]['state']
+                next_state = trajectory[i]['next_state']
+                action = get_num_action(trajectory[i]['action'])
+                
+                Q[state][action] = update(state, action, next_state, rewards, Q, alpha, gamma)
+
+            print_q(Q)
+            update_policy(Q, politica)
+
+        else:
+            for trajectory in traj.trajs:
+                for i in range(0, len(trajectory)):
+
+                    state = trajectory[i]['state']
+                    next_state = trajectory[i]['next_state']
+                    action = get_num_action(trajectory[i]['action'])
+                    
+                    Q[state][action] = update(state, action, next_state, rewards, Q, alpha, gamma)
+                
+            print_q(Q)
+            update_policy(Q, politica)
 
     elif (rand):
-        
-        state = 1 # initial state
-        while state !=6 :
+        iterations = int(input('number of iterations: '))
 
-            next_state = rand_next_state(state)
-            action = get_num_action(rand_action())
-            
-            Q[state][action] = update(state, action, next_state, rewards, Q, alpha, gamma)
+        for i in range(iterations):
 
-            state = next_state
+            state = 1 # initial state
+            while state !=6 :
+                next_state = rand_next_state(state)
+                action = get_num_action(rand_action())
+
+                Q[state][action] = update(state, action, next_state, rewards, Q, alpha, gamma)
+                state = next_state
             
 
         print_q(Q)
